@@ -1,0 +1,329 @@
+{
+	"info": {
+		"_postman_id": "a76c5e72-8ef4-469f-b923-976375acc7b5",
+		"name": "TotallyVoluntaryHomeWork",
+		"description": "- Přes API založte libovolného nového uživatele a automaticky zvalidujte, že:\n    \n    - Reponse kód je 201,\n        \n    - emailVerified je nastaven na false\n        \n\nimage je null (HINT: to.be.null)\n\n- Pro vašeho uživatele založte nový účet a automaticky zvalidujte, že:\n    \n    - Reponse kód je 201,\n        \n    - isActive je nastaveno na true\n        \n    - email odpovídá emailu vámi založeného uživatele (HINT: v části 1 si nastavte tento email do proměnné kolekcí a zde použijte)\n        \n\nOPTIONAL: Pokud chcete účet si přejmenujte\n\n- Pošlete dvě libovolné transakce z původního účtu na nově založený, a automaticky zvalidujte že:\n    \n\nReponse kód je 201  \n  \nAPI docs: [https://praha.czechibank.ostrava.digital/api/v1/docs/page](https://praha.czechibank.ostrava.digital/api/v1/docs/page)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01_NewUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "668f94fb-87bf-4eaa-b014-7200aa257185",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"  pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check JSON structure\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    //emailVerified je nastaven na false\r",
+							"    pm.expect(jsonData.emailVerified).to.be.false;\r",
+							"    //image je null (HINT: to.be.null)\r",
+							"    pm.expect(jsonData.image).to.be.null ;\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"apiKey\",pm.response.json().apiKey);\r",
+							"pm.collectionVariables.set(\"email\",pm.response.json().email);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "ba735962-b92c-44cc-867d-abd68fc79f49",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{$randomFullName}}\",\r\n  \"email\": \"{{$randomEmail}}\",\r\n  \"password\": \"{{$randomPassword}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseURL}}/user/create"
+			},
+			"response": []
+		},
+		{
+			"name": "02_NewBankAcc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3120e996-fa0e-40b0-9377-1b282bb49a1a",
+						"exec": [
+							"//Reponse kód je 201,",
+							"pm.test(\"Status code is 201\", function () {",
+							"  pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"//isActive je nastaveno na true_hotov",
+							"pm.test(\"IsActive is true\", function () {",
+							"    pm.expect(jsonData.data.bankAccount.data.isActive).to.be.true;",
+							"});",
+							"",
+							"//email odpovídá emailu vámi založeného uživatele (HINT: v části 1 si nastavte tento email do proměnné kolekcí a zde použijte)",
+							"pm.test(\"Email is correct\", function () {",
+							"    var email = pm.collectionVariables.get(\"email\");",
+							"    pm.expect(jsonData.data.bankAccount.data.user.email).to.eql(email);",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"newAccNr\", jsonData.data.bankAccount.data.number);",
+							"pm.collectionVariables.set(\"newAccId\", jsonData.data.bankAccount.data.id);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "90c9281a-566a-4cec-a48a-4eee7917162a",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"currency\": \"CZECHITOKEN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseURL}}/bank-account/create"
+			},
+			"response": []
+		},
+		{
+			"name": "03_RenameBankAcc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3120e996-fa0e-40b0-9377-1b282bb49a1a",
+						"exec": [
+							"//Reponse kód je 201,\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "8d11cd84-e7dc-4a5d-b155-18fdb5a74caa",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{$randomBankAccountName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseURL}}/bank-account/{{newAccId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "04_RetrieveBankAccNo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3120e996-fa0e-40b0-9377-1b282bb49a1a",
+						"exec": [
+							"//Reponse kód je 201,\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"MainBankAccNo\", jsonData.data.bankAccounts[0].number);\r",
+							"//pm.collectionVariables.set(\"newAccNr\", jsonData.data.bankAccount[1].number);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "94b94307-73fe-4e44-9f96-8888cfc1fe63",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{baseURL}}/bank-account"
+			},
+			"response": []
+		},
+		{
+			"name": "05_NewTransactionToOwnBankAcc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3120e996-fa0e-40b0-9377-1b282bb49a1a",
+						"exec": [
+							"//Reponse kód je 201,\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"  pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "a8271e35-124a-4720-9ea9-a37e0c52954c",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"amount\": 101,\r\n  \"fromBankNumber\": \"{{MainBankAccNo}}\",\r\n  \"toBankNumber\": \"{{newAccNr}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseURL}}/transactions/create"
+			},
+			"response": []
+		},
+		{
+			"name": "06_NewTransactionToOwnBankAccAgain",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3120e996-fa0e-40b0-9377-1b282bb49a1a",
+						"exec": [
+							"//Reponse kód je 201,\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"  pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "07203872-6a69-415e-889d-7805aa29742d",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"amount\": 101,\r\n  \"fromBankNumber\": \"{{MainBankAccNo}}\",\r\n  \"toBankNumber\": \"{{newAccNr}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseURL}}/transactions/create"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": {
+			"in": "header",
+			"value": "{{apiKey}}",
+			"key": "X-API-Key"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d8a63225-26de-4c20-981f-0d44f9172ad8",
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "d7546996-00cb-44aa-a162-e6299633ae51",
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": ""
+		},
+		{
+			"key": "apiKey",
+			"value": ""
+		},
+		{
+			"key": "newAccNr",
+			"value": ""
+		},
+		{
+			"key": "newAccId",
+			"value": ""
+		},
+		{
+			"key": "MainBankAccNo",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		}
+	]
+}
