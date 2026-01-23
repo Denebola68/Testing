@@ -1,0 +1,624 @@
+{
+	"info": {
+		"_postman_id": "1bb73ecc-863c-437e-8b1c-8d202de5da0d",
+		"name": "API - Get user details",
+		"description": "As an any active user of the application I would like to access all information tracked about myself [<b>via API</b>](https://czechitasda.docs.apiary.io/#reference/terms-collection/apitermstermid/get-single-term).\n\nBellow mentioned information will be shown about particular active user (his/her bearer token needs to be provided):\n\n- ID,\n    \n- Name,\n    \n- Email,\n    \n- If user is blocked or not,\n    \n- His/Her role,\n    \n- Date when the account was created,\n    \n- Date when the account was updated for the last time.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01_Happy path_all roles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d731a273-ec0d-4a43-92c6-be9389f2bb57",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var schema = {",
+							"  \"type\": \"object\",",
+							"  \"required\": [",
+							"    \"id\",",
+							"    \"name\",",
+							"    \"email\",",
+							"    \"role\"",
+							"  ],",
+							"  \"properties\": {",
+							"    \"id\": {",
+							"      \"type\": \"number\"",
+							"    },",
+							"    \"name\": {",
+							"      \"type\": \"string\"",
+							"    },",
+							"    \"email\": {",
+							"      \"type\": \"string\"",
+							"    },",
+							"    \"is_blocked\": {",
+							"      \"type\": \"boolean\"",
+							"    },",
+							"    \"role\": {",
+							"      \"type\": \"string\",",
+							"      \"enum\": [",
+							"        \"parent\",",
+							"        \"master\",",
+							"        \"admin\"",
+							"      ],",
+							"      \"description\": \"New user is always parent role\"",
+							"    },",
+							"    \"created_at\": {",
+							"      \"type\": \"string\",",
+							"      \"format\": \"date-time\",",
+							"      \"description\": \"DateTime in RFC3339 format\"",
+							"    },",
+							"    \"updated_at\": {",
+							"      \"type\": \"string\",",
+							"      \"format\": \"date-time\",",
+							"      \"description\": \"DateTime in RFC3339 format\"",
+							"    }",
+							"  },",
+							"};",
+							"",
+							"pm.test(\"Check JSON structure and active status of user\", function () {",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.is_blocked).to.be.false;",
+							"});",
+							"",
+							"console.log(\"Running as role:\", pm.iterationData.get(\"role\"));"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c19fda6c-9dd3-408a-9d30-7e3ad5d29ae1",
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "35658b69-132a-421b-a567-7e4ae82d7bdc",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{token}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{baseURL}}/users/current"
+			},
+			"response": []
+		},
+		{
+			"name": "02_Invalid_method_post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d731a273-ec0d-4a43-92c6-be9389f2bb57",
+						"exec": [
+							"pm.test(\"Status code is 405\", function () {",
+							"    pm.response.to.have.status(405);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "98acbf28-94af-42d0-ab81-dbe0f0ded512",
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "a68706aa-097c-4d97-8ef1-a7ab86909339",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": "{{baseURL}}/users/current"
+			},
+			"response": []
+		},
+		{
+			"name": "03_Invalid_method_delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d731a273-ec0d-4a43-92c6-be9389f2bb57",
+						"exec": [
+							"pm.test(\"Status code is 405\", function () {",
+							"    pm.response.to.have.status(405);",
+							"});",
+							"//potrebujem si potvrdit s davidem, jestli blocked user má mít taky přístup k infu a status code 200"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "98acbf28-94af-42d0-ab81-dbe0f0ded512",
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "73667fe7-0ee8-4a47-8e63-dd1bdb4a8ac2",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": "{{baseURL}}/users/current"
+			},
+			"response": []
+		},
+		{
+			"name": "04_Invalid_method_put",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d731a273-ec0d-4a43-92c6-be9389f2bb57",
+						"exec": [
+							"pm.test(\"Status code is 405\", function () {",
+							"    pm.response.to.have.status(405);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "98acbf28-94af-42d0-ab81-dbe0f0ded512",
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "00b9755a-5075-4124-b874-e863244a5170",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": "{{baseURL}}/users/current"
+			},
+			"response": []
+		},
+		{
+			"name": "05_Invalid_method_patch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d731a273-ec0d-4a43-92c6-be9389f2bb57",
+						"exec": [
+							"pm.test(\"Status code is 405\", function () {",
+							"    pm.response.to.have.status(405);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "98acbf28-94af-42d0-ab81-dbe0f0ded512",
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "88351182-e3be-4795-ae9d-210dddfec6b2",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": "{{baseURL}}/users/current"
+			},
+			"response": []
+		},
+		{
+			"name": "06_Invalid_body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d731a273-ec0d-4a43-92c6-be9389f2bb57",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var schema = {",
+							"  \"type\": \"object\",",
+							"  \"required\": [",
+							"    \"id\",",
+							"    \"name\",",
+							"    \"email\",",
+							"    \"role\"",
+							"  ],",
+							"  \"properties\": {",
+							"    \"id\": {",
+							"      \"type\": \"number\"",
+							"    },",
+							"    \"name\": {",
+							"      \"type\": \"string\"",
+							"    },",
+							"    \"email\": {",
+							"      \"type\": \"string\"",
+							"    },",
+							"    \"is_blocked\": {",
+							"      \"type\": \"boolean\"",
+							"    },",
+							"    \"role\": {",
+							"      \"type\": \"string\",",
+							"      \"enum\": [",
+							"        \"parent\"",
+							"      ],",
+							"      \"description\": \"New user is always parent role\"",
+							"    },",
+							"    \"created_at\": {",
+							"      \"type\": \"string\",",
+							"      \"format\": \"date-time\",",
+							"      \"description\": \"DateTime in RFC3339 format\"",
+							"    },",
+							"    \"updated_at\": {",
+							"      \"type\": \"string\",",
+							"      \"format\": \"date-time\",",
+							"      \"description\": \"DateTime in RFC3339 format\"",
+							"    }",
+							"  },",
+							"};",
+							"",
+							"pm.test(\"Check JSON structure and active status of user\", function () {",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.is_blocked).to.be.false;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "fc2e3bc6-3cc7-4e00-b861-ad895acc2521",
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "9f4ff341-726c-4996-b57e-19dfdd40b43e",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"category_id\": 1,\r\n  \"start\": \"2025-04-23\",\r\n  \"end\": \"2025-04-23\",\r\n  \"price\": 1,\r\n  \"opening\": \"\",\r\n  \"note_public\": \"\",\r\n  \"note_private\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseURL}}/users/current"
+			},
+			"response": []
+		},
+		{
+			"name": "07_No token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d731a273-ec0d-4a43-92c6-be9389f2bb57",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"var schema = {",
+							"  \"type\": \"object\",",
+							"  \"properties\": {",
+							"    \"message\": {",
+							"      \"type\": \"string\",",
+							"      \"examples\": [\"Unauthenticated.\"]",
+							"    }",
+							"  },",
+							"  \"required\": [\"message\"],  //\"required\": [\"message\"] — vlastnosť message musí existovať",
+							"  \"additionalProperties\": false  //\"additionalProperties\": false — nesmie existovať nič iné než message",
+							"};",
+							"",
+							"pm.test(\"Check JSON structure of answer\", function () {",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "522746b4-2a2f-4c45-8ce7-4b35578a856d",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": "{{baseURL}}/users/current"
+			},
+			"response": []
+		},
+		{
+			"name": "08_Blocked_user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d731a273-ec0d-4a43-92c6-be9389f2bb57",
+						"exec": [
+							"pm.test(\"Status code is 4xx\", function () {",
+							"    pm.expect(pm.response.code).to.be.within(400, 499);",
+							"});",
+							"",
+							"var schema = {",
+							"  \"type\": \"object\",",
+							"  \"properties\": {",
+							"    \"message\": {",
+							"      \"type\": \"string\",",
+							"      \"examples\": [\"Unauthenticated.\"]",
+							"    }",
+							"  },",
+							"  \"required\": [\"message\"],  //\"required\": [\"message\"] — vlastnosť message musí existovať",
+							"  \"additionalProperties\": false  //\"additionalProperties\": false — nesmie existovať nič iné než message",
+							"};",
+							"",
+							"pm.test(\"Check JSON structure of answer\", function () {",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "f9864c7d-adc2-48b8-932c-338ad8bf216f",
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "4fb4e0e8-94ba-4d33-884c-4c5e602a6992",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "10|Hqq1bIMyrTxMmZknNxlSRO6WVu0Q8Ievv0J4pZSk93772904"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{baseURL}}/users/current"
+			},
+			"response": []
+		},
+		{
+			"name": "09_Deleted user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d731a273-ec0d-4a43-92c6-be9389f2bb57",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"var schema = {",
+							"  \"type\": \"object\",",
+							"  \"properties\": {",
+							"    \"message\": {",
+							"      \"type\": \"string\",",
+							"      \"examples\": [\"Unauthenticated.\"]",
+							"    }",
+							"  },",
+							"  \"required\": [\"message\"],  //\"required\": [\"message\"] — vlastnosť message musí existovať",
+							"  \"additionalProperties\": false  //\"additionalProperties\": false — nesmie existovať nič iné než message",
+							"};",
+							"",
+							"pm.test(\"Check JSON structure of answer\", function () {",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "07cf2b34-f09a-4aa2-b4ab-7e432eede2a4",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "11|8f3km2GOYUwm7hCkH2yhnmkJl0PTqKfV4m70fKtefdb70056"
+					}
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": "{{baseURL}}/users/current"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "1|7SmPuJeDMV02GMv5KfeIMLk5XAPYeFXMo3lbGINO1a51a0cf"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "87258308-ae2d-4419-95b5-6dcceca8ab85",
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "bb5c437c-6e9a-43ed-b4c6-c360f9dce3ff",
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://theitcredibles.datpp25.czechitas.online/api"
+		},
+		{
+			"key": "token",
+			"value": "Bearer {{token}}"
+		}
+	]
+}
