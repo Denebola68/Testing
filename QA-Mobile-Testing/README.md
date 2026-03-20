@@ -42,4 +42,4 @@ Beyond defect reporting, I provided strategic feedback to improve user experienc
 ---
 
 ### **Deliverables**
-The full anonymized bug report table is available in the repository documentation.
+The full anonymized bug report table is available in the repository documentation. UI elements and branding have been intentionally blurred/redacted to protect the intellectual property of the original developer.
